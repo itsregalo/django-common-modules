@@ -26,15 +26,22 @@ class UserFormView(SessionWizardView):
         skill_form.save(commit=False)
         document_form.save(commit=False)
 
-        user_form.save()
-        job_seeker_form.user = user_form
-        job_seeker_form.save()
-        education_form.job_seeker = job_seeker_form
-        education_form.save()
-        skill_form.job_seeker = job_seeker_form
-        skill_form.save()
-        document_form.job_seeker = job_seeker_form
-        document_form.save()
+        user = user_form.save()
+        job_seeker = job_seeker_form.save(commit=False)
+        job_seeker.user = user
+        job_seeker.save()
+
+        education = education_form.save(commit=False)
+        education.job_seeker = job_seeker
+        education.save()
+
+        skill = skill_form.save(commit=False)
+        skill.job_seeker = job_seeker
+        skill.save()
+
+        document = document_form.save(commit=False)
+        document.job_seeker = job_seeker
+        document.save()
 
         return HttpResponseRedirect('/success/')
 
