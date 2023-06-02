@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+  {{ wizard.form.media }}
+{% endblock %}
+
+{% block body %}
+  <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+       
+       <div class="col-12">
+        <div class="row">
+          {% for  field in form %}
+            <div class="col-3">
+              <div class="form-group pb-3">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <small class="form-text text-danger">{{ error }}</small>
+                {% endfor %}
+              </div>
+            </div>
+        {% endfor %}
+     </div>
+       </div>
+    {% endfor %}
+
+    <button type="button" name="add_new" id="add_new">{{ _('Add new') }}</button>
+    <br>
+    {% if wizard.steps.prev %}
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">
+        {% translate "First Step" %}
+      </button>
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">
+        {% translate "Prev Step" %}
+      </button>
+    {% endif %}
+    <input type="submit" value="{% translate "Submit" %}"/>
+  </form>
+{% endblock %}
+
+{% block script %}
+<script>
+  document.getElementById('add_new').addEventListener('click', function() {
+    var formset = document.getElementById('id_form-TOTAL_FORMS');
+    var totalForms = parseInt(formset.value);
+    var newFormIndex = totalForms;
+
+    // Create a new form element by replacing form fields' "name" attribute indexes
+    var newForm = document.createElement('tr');
+    newForm.innerHTML = formset.outerHTML.replace(/form-(\d+)/g, 'form-' + newFormIndex);
+    
+    // Update the management form's "TOTAL_FORMS" value
+    formset.setAttribute('value', totalForms + 1);
+
+    // Append the new form to the formset table
+    var table = document.querySelector('#id_form-0').closest('table');
+    table.appendChild(newForm);
+  });
+</script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django import forms
 from .models import User, JobSeeker, Education, Skill, Document
+from django.forms import formset_factory
 
 
 class UserForm(forms.ModelForm):
@@ -22,6 +23,13 @@ class EducationForm(forms.ModelForm):
         model = Education
         exclude = ['job_seeker']
 
+        widgets = {
+            'certificate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your certificate'}),
+            'institute': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your institute'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
 
 class SkillForm(forms.ModelForm):
     class Meta:
@@ -33,3 +41,4 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         exclude = ['job_seeker']
+

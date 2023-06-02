@@ -1,0 +1,35 @@
+<!-- user_form.html -->
+
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+  {{ wizard.form.media }}
+{% endblock %}
+
+{% block body %}
+  <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+  <form action="" method="post">
+    {% csrf_token %}
+    User
+    <table>
+      {{ wizard.management_form }}
+      {% if wizard.form.forms %}
+        {% for form in wizard.form.forms %}
+          {{ form.as_table }}
+        {% endfor %}
+      {% else %}
+        {{ wizard.form }}
+      {% endif %}
+    </table>
+    {% if wizard.steps.prev %}
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">
+        {% translate "First Step" %}
+      </button>
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">
+        {% translate "Prev Step" %}
+      </button>
+    {% endif %}
+    <input type="submit" class="btn btn-primary" value="{% translate "Submit" %}"/>
+  </form>
+{% endblock %}
